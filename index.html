@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily German Vocabulary</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .word-list { margin-top: 20px; }
+    .word { margin-bottom: 10px; }
+    .example { color: gray; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+  <h1>Daily German Vocabulary</h1>
+  <button onclick="fetchDailyWords()">Get Today's Words</button>
+  <div class="word-list" id="wordList"></div>
+
+  <script>
+    async function fetchDailyWords() {
+      const wordList = document.getElementById('wordList');
+      wordList.innerHTML = '<p>Loading...</p>';
+      
+      // Rastgele Almanca kelimeleri almak için Glosbe API'sini kullan
+      try {
+        const dailyWords = [];
+        
+        // Günlük 20 kelimeyi getirme döngüsü
+        for (let i = 0; i < 20; i++) {
+          // Rastgele bir Almanca kelime seçme
+          const wordResponse = await fetch(`https://api.glosbe.com/v1/translate?from=de&dest=en&format=json&phrase=${encodeURIComponent(randomGermanWord())}`);
+          const wordData = await wordResponse.json();
+          
+          if (wordData.tuc && wordData.tuc[0] && wordData.tuc[0].phrase) {
+            const wordObj = {
+              word: wordData.tuc[0].phrase.text,
+              meaning: wordData.tuc[0].meanings ? wordData.tuc[0].meanings[0].text : "Meaning not available",
+              example: wordData.examples && wordData.examples[0] ? wordData.examples[0].first : "No example available",
+              examplemeaning: wordData.examples && wordData.examples[0] ? wordData.examples[0].second : "No English example available"
+            };
+            dailyWords.push(wordObj);
+          }
+        }
+
+        displayWords(dailyWords);
+
+      } catch (error) {
+        wordList.innerHTML = '<p>Failed to load words. Please try again later.</p>';
+        console.error("Error fetching words:", error);
+      }
+    }
+
+    function randomGermanWord() {
+      const words = ["Apfel", "Brot", "Haus", "Baum", "Auto", "Katze", "Hund", "Buch", "Tisch", "Stuhl", "Fenster", "Tür", "Stadt", "Land", "Himmel", "Wasser", "Berg", "Fluss", "Straße", "Hand"];
+      return words[Math.floor(Math.random() * words.length)];
+    }
+
+    function displayWords(words) {
+      const wordList = document.getElementById('wordList');
+      wordList.innerHTML = '';  // Önceki kelimeleri temizle
+      
+      words.forEach(wordData => {
+        const wordItem = document.createElement('div');
+        wordItem.classList.add('word');
+        
+        wordItem.innerHTML = `
+          <strong>${wordData.word}:</strong> ${wordData.meaning}<br>
+          <span class="example">${wordData.example}</span><br>
+          <span class="examplemeaning">(${wordData.examplemeaning})</span>
+        `;
+
+        wordList.appendChild(wordItem);
+      });
+    }
+  </script>
+</body>
+</html>
