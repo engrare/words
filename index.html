@@ -1,78 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily German Vocabulary</title>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    .word-list { margin-top: 20px; }
-    .word { margin-bottom: 10px; }
-    .example { color: gray; font-size: 0.9em; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Word Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        .word-card {
+            padding: 10px;
+            background-color: #ffffff;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+        }
+        .word-card h3 {
+            margin: 0;
+            color: #4CAF50;
+        }
+        .word-card p {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
+    <h1>Daily Vocabulary</h1>
+    <div class="container" id="wordContainer"></div>
 
-  <h1>Daily German Vocabulary</h1>
-  <button onclick="fetchDailyWords()">Get Today's Words</button>
-  <div class="word-list" id="wordList"></div>
+    <script>
+        const words = [
+            { "word": "das Haus", "meaning": "house", "example": "Das Haus ist sehr groß.", "examplemeaning": "The house is very big." },
+			{ "word": "der Baum", "meaning": "tree", "example": "Der Baum im Garten ist alt.", "examplemeaning": "The tree in the garden is old." },
+			{ "word": "das Auto", "meaning": "car", "example": "Mein Auto ist rot.", "examplemeaning": "My car is red." },
+			{ "word": "das Buch", "meaning": "book", "example": "Ich lese ein spannendes Buch.", "examplemeaning": "I am reading an exciting book." },
+			{ 
+			  "word": "der Apfel", 
+			  "meaning": "apple", 
+			  "example": "Der Apfel ist süß und saftig.", 
+			  "examplemeaning": "The apple is sweet and juicy." 
+			},
+			{ 
+			  "word": "der Freund", 
+			  "meaning": "friend", 
+			  "example": "Mein bester Freund ist nett.", 
+			  "examplemeaning": "My best friend is nice." 
+			},
+			{ 
+			  "word": "der Hund", 
+			  "meaning": "dog", 
+			  "example": "Der Hund spielt im Garten.", 
+			  "examplemeaning": "The dog is playing in the garden." 
+			},
+			{ 
+			  "word": "die Schule", 
+			  "meaning": "school", 
+			  "example": "Die Schule beginnt um 8 Uhr.", 
+			  "examplemeaning": "The school starts at 8 o'clock." 
+			},
+			{ 
+			  "word": "der Stuhl", 
+			  "meaning": "chair", 
+			  "example": "Ich sitze auf einem bequemen Stuhl.", 
+			  "examplemeaning": "I am sitting on a comfortable chair." 
+			},
+			{ 
+			  "word": "das Brot", 
+			  "meaning": "bread", 
+			  "example": "Das Brot ist frisch gebacken.", 
+			  "examplemeaning": "The bread is freshly baked." 
+			},
+			{ 
+			  "word": "die Stadt", 
+			  "meaning": "city", 
+			  "example": "Die Stadt ist sehr lebendig.", 
+			  "examplemeaning": "The city is very lively." 
+			},
+			{ 
+			  "word": "die Straße", 
+			  "meaning": "street", 
+			  "example": "Die Straße ist lang und breit.", 
+			  "examplemeaning": "The street is long and wide." 
+			},
+			{ 
+			  "word": "die Blume", 
+			  "meaning": "flower", 
+			  "example": "Die Blume ist wunderschön.", 
+			  "examplemeaning": "The flower is beautiful." 
+			},
+			{ 
+			  "word": "das Fenster", 
+			  "meaning": "window", 
+			  "example": "Das Fenster ist offen.", 
+			  "examplemeaning": "The window is open." 
+			},
+			{ 
+			  "word": "der Tisch", 
+			  "meaning": "table", 
+			  "example": "Der Tisch ist aus Holz.", 
+			  "examplemeaning": "The table is made of wood." 
+			},
+			{ 
+			  "word": "das Wasser", 
+			  "meaning": "water", 
+			  "example": "Ich trinke ein Glas Wasser.", 
+			  "examplemeaning": "I am drinking a glass of water." 
+			},
+			{ 
+			  "word": "die Milch", "meaning": "milk", "example": "Die Milch ist frisch.", "examplemeaning": "The milk is fresh." },
+			{ "word": "das Fahrrad", "meaning": "bicycle", "example": "Ich fahre mit dem Fahrrad zur Arbeit.", "examplemeaning": "I go to work by bicycle." },
+			{ "word": "die Lampe", "meaning": "lamp", "example": "Die Lampe ist sehr hell.", "examplemeaning": "The lamp is very bright."},
+			{ "word": "das Zimmer", "meaning": "room", "example": "Mein Zimmer ist gemütlich.", "examplemeaning": "My room is cozy." },
+			{ "word": "die Uhr", "meaning": "clock", "example": "Die Uhr zeigt 12 Uhr.", "examplemeaning": "The clock shows 12 o'clock." },
+			{ "word": "die Tasse", "meaning": "cup", "example": "Ich trinke aus der Tasse.", "examplemeaning": "I drink from the cup." },
+			{ "word": "das Bett", "meaning": "bed", "example": "Das Bett ist bequem.", "examplemeaning": "The bed is comfortable." },
+			{ "word": "der Löffel", "meaning": "spoon", "example": "Ich esse Suppe mit dem Löffel.", "examplemeaning": "I eat soup with the spoon." },
+			{ "word": "die Tür", "meaning": "door", "example": "Die Tür ist geschlossen.", "examplemeaning": "The door is closed." },
+			{ "word": "der Freund", "meaning": "friend", "example": "Mein Freund hilft mir.", "examplemeaning": "My friend helps me." },
+			{ "word": "die Katze", "meaning": "cat", "example": "Die Katze schläft auf dem Sofa.", "examplemeaning": "The cat sleeps on the sofa." },
+			{ "word": "der Vogel", "meaning": "bird", "example": "Der Vogel singt ein Lied.", "examplemeaning": "The bird sings a song." },
+			{ "word": "das Fenster", "meaning": "window", "example": "Das Fenster ist offen.", "examplemeaning": "The window is open." },
+			{ "word": "das Messer", "meaning": "knife", "example": "Ich schneide das Brot mit dem Messer.", "examplemeaning": "I cut the bread with the knife." },
+			{ "word": "die Blume", "meaning": "flower", "example": "Die Blume duftet gut.", "examplemeaning": "The flower smells good." },
+			{ "word": "das Wasser", "meaning": "water", "example": "Ich trinke ein Glas Wasser.", "examplemeaning": "I drink a glass of water." },
+			{ "word": "der Koffer", "meaning": "suitcase", "example": "Mein Koffer ist schwer.", "examplemeaning": "My suitcase is heavy." },
+			{ "word": "der Tisch", "meaning": "table", "example": "Der Tisch ist rund.", "examplemeaning": "The table is round." },
+			{ "word": "die Lampe", "meaning": "lamp", "example": "Die Lampe leuchtet hell.", "examplemeaning": "The lamp shines brightly." },
+			{ "word": "das Heft", "meaning": "notebook", "example": "Ich schreibe in mein Heft.", "examplemeaning": "I write in my notebook." },
+			{ "word": "die Straße", "meaning": "street", "example": "Die Straße ist belebt.", "examplemeaning": "The street is busy." },
+			{ "word": "der Markt", "meaning": "market", "example": "Der Markt ist groß.", "examplemeaning": "The market is large." },
+			{ "word": "die Wolke", "meaning": "cloud", "example": "Die Wolke ist weiß.", "examplemeaning": "The cloud is white." },
+			{ "word": "der Regen", "meaning": "rain", "example": "Der Regen fällt leise.", "examplemeaning": "The rain falls softly." },
+			{ "word": "die Zeitung", "meaning": "newspaper", "example": "Ich lese die Zeitung jeden Morgen.", "examplemeaning": "I read the newspaper every morning." },
+			{ "word": "das Pferd", "meaning": "horse", "example": "Das Pferd galoppiert auf der Wiese.", "examplemeaning": "The horse gallops on the meadow." },
+			{ "word": "das Kino", "meaning": "cinema", "example": "Wir gehen ins Kino.", "examplemeaning": "We are going to the cinema." },
+			{ "word": "das Flugzeug", "meaning": "airplane", "example": "Das Flugzeug fliegt hoch.", "examplemeaning": "The airplane flies high." },
+			{ "word": "der Schrank", "meaning": "wardrobe", "example": "Die Kleidung ist im Schrank.", "examplemeaning": "The clothes are in the wardrobe." },
+			{ "word": "die Mütze", "meaning": "cap", "example": "Er trägt eine rote Mütze.", "examplemeaning": "He wears a red cap." },
+			{ "word": "die Sonne", "meaning": "sun", "example": "Die Sonne scheint hell.", "examplemeaning": "The sun shines brightly." },
+			{ "word": "das Meer", "meaning": "sea", "example": "Das Meer ist ruhig.", "examplemeaning": "The sea is calm." },
+			{ "word": "das Kind", "meaning": "child", "example": "Das Kind spielt im Sand.", "examplemeaning": "The child plays in the sand." },
+			{ "word": "die Tasche", "meaning": "bag", "example": "Die Tasche ist schwer.", "examplemeaning": "The bag is heavy." },
+			{ "word": "die Uhr", "meaning": "clock", "example": "Die Uhr tickt laut.", "examplemeaning": "The clock ticks loudly." },
+			{ "word": "die Rose", "meaning": "rose", "example": "Die Rose ist rot.", "examplemeaning": "The rose is red." },
+			{ "word": "die Wand", "meaning": "wall", "example": "Die Wand ist weiß gestrichen.", "examplemeaning": "The wall is painted white." },
+			{ "word": "das Herz", "meaning": "heart", "example": "Mein Herz schlägt schnell.", "examplemeaning": "My heart beats fast." },
+			{ "word": "der Stern", "meaning": "star", "example": "Der Stern leuchtet am Himmel.", "examplemeaning": "The star shines in the sky." },
+			{ "word": "der Schnee", "meaning": "snow", "example": "Der Schnee bedeckt die Berge.", "examplemeaning": "The snow covers the mountains." },
+			{ "word": "das Schloss", "meaning": "castle", "example": "Das Schloss ist alt und groß.", "examplemeaning": "The castle is old and big." },
+			{ "word": "die Brücke", "meaning": "bridge", "example": "Die Brücke führt über den Fluss.", "examplemeaning": "The bridge crosses the river." },
+			{ "word": "die Kirche", "meaning": "church", "example": "Die Kirche ist alt und schön.", "examplemeaning": "The church is old and beautiful." },
+			{ "word": "das Bild", "meaning": "picture", "example": "Das Bild hängt an der Wand.", "examplemeaning": "The picture hangs on the wall." },
+			{ "word": "die Musik", "meaning": "music", "example": "Ich höre gern Musik.", "examplemeaning": "I like listening to music." },
+			{ "word": "der Film", "meaning": "movie", "example": "Wir sehen einen Film im Kino.", "examplemeaning": "We watch a movie in the cinema." },
+			{ "word": "der Garten", "meaning": "garden", "example": "Im Garten wachsen viele Blumen.", "examplemeaning": "Many flowers grow in the garden." },
+			{ "word": "das Spiel", "meaning": "game", "example": "Wir spielen ein lustiges Spiel.", "examplemeaning": "We play a fun game." },
+			{ "word": "das Fahrrad", "meaning": "bicycle", "example": "Ich fahre mit dem Fahrrad zur Arbeit.", "examplemeaning": "I go to work by bicycle." },
+			{ "word": "die Geschichte", "meaning": "story", "example": "Die Geschichte ist spannend.", "examplemeaning": "The story is exciting." },
+			{ "word": "das Krankenhaus", "meaning": "hospital", "example": "Er arbeitet im Krankenhaus.", "examplemeaning": "He works in the hospital." },
+			{ "word": "das Geschenk", "meaning": "gift", "example": "Ich habe ein schönes Geschenk bekommen.", "examplemeaning": "I received a nice gift." },
+			{ "word": "das Taxi", "meaning": "taxi", "example": "Wir nehmen ein Taxi zur Stadt.", "examplemeaning": "We take a taxi to the city." },
+			{ "word": "der Bus", "meaning": "bus", "example": "Der Bus kommt bald an.", "examplemeaning": "The bus arrives soon." }
+        ];
 
-  <script>
-    async function fetchDailyWords() {
-      const wordList = document.getElementById('wordList');
-      wordList.innerHTML = '<p>Loading...</p>';
-      
-      // Rastgele Almanca kelimeleri almak için Glosbe API'sini kullan
-      try {
-        const dailyWords = [];
-        
-        // Günlük 20 kelimeyi getirme döngüsü
-        for (let i = 0; i < 20; i++) {
-          // Rastgele bir Almanca kelime seçme
-          const wordResponse = await fetch(`https://api.glosbe.com/v1/translate?from=de&dest=en&format=json&phrase=${encodeURIComponent(randomGermanWord())}`);
-          const wordData = await wordResponse.json();
-          
-          if (wordData.tuc && wordData.tuc[0] && wordData.tuc[0].phrase) {
-            const wordObj = {
-              word: wordData.tuc[0].phrase.text,
-              meaning: wordData.tuc[0].meanings ? wordData.tuc[0].meanings[0].text : "Meaning not available",
-              example: wordData.examples && wordData.examples[0] ? wordData.examples[0].first : "No example available",
-              examplemeaning: wordData.examples && wordData.examples[0] ? wordData.examples[0].second : "No English example available"
-            };
-            dailyWords.push(wordObj);
-          }
+        const wordsPerDay = 20;
+
+        function getDayNumber() {
+            const startDate = new Date("2024-11-06"); // Set start date here
+            const today = new Date();
+            const differenceInTime = today.getTime() - startDate.getTime();
+            const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+            return differenceInDays + 1;
         }
 
-        displayWords(dailyWords);
+        function displayWords() {
+            const dayNumber = getDayNumber();
+            const endWordIndex = Math.min(dayNumber * wordsPerDay, words.length);
+            const wordContainer = document.getElementById("wordContainer");
+            wordContainer.innerHTML = ""; // Clear previous words
 
-      } catch (error) {
-        wordList.innerHTML = '<p>Failed to load words. Please try again later.</p>';
-        console.error("Error fetching words:", error);
-      }
-    }
+            for (let i = 0; i < endWordIndex; i++) {
+                const wordData = words[i];
+                const wordCard = document.createElement("div");
+                wordCard.className = "word-card";
+                wordCard.innerHTML = `
+                    <h3>${wordData.word}</h3>
+                    <p><strong>Meaning:</strong> ${wordData.meaning}</p>
+                    <p><strong>Example:</strong> ${wordData.example}</p>
+                    <p><strong>Example Meaning:</strong> ${wordData.examplemeaning}</p>
+                `;
+                wordContainer.appendChild(wordCard);
+            }
+        }
 
-    function randomGermanWord() {
-      const words = ["Apfel", "Brot", "Haus", "Baum", "Auto", "Katze", "Hund", "Buch", "Tisch", "Stuhl", "Fenster", "Tür", "Stadt", "Land", "Himmel", "Wasser", "Berg", "Fluss", "Straße", "Hand"];
-      return words[Math.floor(Math.random() * words.length)];
-    }
-
-    function displayWords(words) {
-      const wordList = document.getElementById('wordList');
-      wordList.innerHTML = '';  // Önceki kelimeleri temizle
-      
-      words.forEach(wordData => {
-        const wordItem = document.createElement('div');
-        wordItem.classList.add('word');
-        
-        wordItem.innerHTML = `
-          <strong>${wordData.word}:</strong> ${wordData.meaning}<br>
-          <span class="example">${wordData.example}</span><br>
-          <span class="examplemeaning">(${wordData.examplemeaning})</span>
-        `;
-
-        wordList.appendChild(wordItem);
-      });
-    }
-  </script>
+        // Display words on load
+        document.addEventListener("DOMContentLoaded", displayWords);
+    </script>
 </body>
 </html>
